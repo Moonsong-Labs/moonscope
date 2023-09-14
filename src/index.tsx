@@ -6,6 +6,7 @@ import BaseHtml from "./components/BaseHtml";
 import BasePage from "./components/BasePage";
 import NavBar from "./components/Nav";
 import Splash from "./components/Splash";
+import DetailPage from "./components/DetailPage";
 
 const svr = await backEnd();
 
@@ -15,31 +16,23 @@ const app = new Elysia()
   .get("/", () => {
     return (
       <BaseHtml>
-      <Splash/>
+        <Splash />
       </BaseHtml>
     );
   })
-  .get("/smoke", () => (
+  .get("/:type", ({ params: { type } }) => (
     <BaseHtml>
       <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
         <NavBar />
-        <BasePage pageTitle="Smoke Tests" imageColor="red-500" imagePosition="left" tableName="smoke_reports" />
+        <BasePage pageTitle={`${type.toLocaleUpperCase()} TESTS`} path="/smoke" tableName={`${type}_reports`} />
       </div>
     </BaseHtml>
   ))
-  .get("/dev", () => (
+  .get("/:type/:id", ({ params: { type, id } }) => (
     <BaseHtml>
       <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
         <NavBar />
-        <BasePage pageTitle="Dev Tests" imageColor="green-500" imagePosition="center" tableName="dev_reports" />
-      </div>
-    </BaseHtml>
-  ))
-  .get("/coverage", () => (
-    <BaseHtml>
-      <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
-        <NavBar />
-        <BasePage pageTitle="Coverage" imageColor="yellow-500" imagePosition="right" tableName="coverage" />
+        <DetailPage pageTitle="Coverage" path={`/${type}/${id}`} tableName={`${type}_reports`} />
       </div>
     </BaseHtml>
   ))

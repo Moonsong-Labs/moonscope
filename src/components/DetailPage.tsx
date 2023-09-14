@@ -12,7 +12,16 @@ const currentTz = () => {
   return `GMT${timezoneOffsetString}`;
 };
 
-export default ({ pageTitle, tableName, path }: { pageTitle: string; tableName: string; path: string }) => {
+export default ({
+  pageTitle,
+  tableName,
+  path
+}: {
+  pageTitle: string;
+  tableName: string;
+  path: string;
+}) => {
+
   const tableModel = TestDataModel.getInstance(tableName);
   const data = tableModel.fetchAllEntries();
 
@@ -23,8 +32,8 @@ export default ({ pageTitle, tableName, path }: { pageTitle: string; tableName: 
       un-cloak
       hx-ext="preload"
     >
-      <div class="w-full min-w-lg max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 max-h-[85vh] overflow-y-auto">
-        <p class="mb-5 glass rounded bg-brown drop-shadow-md inline-block p-2 text-shadow font-bold">{pageTitle}</p>
+      <div class="w-full min-w-lg max-w-6xl mx-auto rounded-xl shadow-lg p-6 max-h-[85vh] overflow-y-auto">
+        <p class="glass rounded drop-shadow-md inline-block text-shadow font-bold">{pageTitle}</p>
 
         <div class="overflow-x-auto">
           <table class="table table-xs">
@@ -42,26 +51,22 @@ export default ({ pageTitle, tableName, path }: { pageTitle: string; tableName: 
             </thead>
             <tbody>
               {data.map(([id, [env, testData]]) => (
-                <a href={`${path}/${id}`}>
-
-                  {/** TODO: CHANGE THIS SO HX-GET ONLY REPLACES THE BODY SECTION WITH NEW WINDOW AND GIVES BACK BUTTON */}
-                  <tr key={id} onClick={() => (window.location.href = `${path}/${id}`)} style={{ cursor: "pointer" }}>
-                    <td>{id}</td>
-                    <td>{`${new Date(testData.startTime).toLocaleString()} (${currentTz()})`}</td>
-                    <td>{env}</td>
-                    <td>{JSON.stringify(testData.numTotalTestSuites)}</td>
-                    <td>{JSON.stringify(testData.numTotalTests)}</td>
-                    <td>{JSON.stringify(testData.numFailedTests)}</td>
-                    <td>{JSON.stringify(testData.numPendingTests)}</td>
-                    <td>
-                      {testData.success ? (
-                        <p class="badge badge-success drop-shadow-md font-semibold ">PASS</p>
-                      ) : (
-                        <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">FAILED</p>
-                      )}
-                    </td>
-                  </tr>
-                </a>
+                <tr key={id} class="hover:bg-gray-200 cursor-pointer transition-colors duration-150" hx-get={`${path}/${id}`} hx-trigger="click">
+                  <td>{id}</td>
+                  <td>{`${new Date(testData.startTime).toLocaleString()} (${currentTz()})`}</td>
+                  <td>{env}</td>
+                  <td>{JSON.stringify(testData.numTotalTestSuites)}</td>
+                  <td>{JSON.stringify(testData.numTotalTests)}</td>
+                  <td>{JSON.stringify(testData.numFailedTests)}</td>
+                  <td>{JSON.stringify(testData.numPendingTests)}</td>
+                  <td>
+                    {testData.success ? (
+                      <p class="badge badge-success drop-shadow-md font-semibold ">PASS</p>
+                    ) : (
+                      <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">FAILED</p>
+                    )}
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
