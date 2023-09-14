@@ -1,15 +1,23 @@
 {
-  "name": "elysia",
+  "name": "moonscope",
   "version": "1.0.50",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.tsx"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@elysiajs/html": "^0.6.5",
+    "@elysiajs/static": "^0.6.0",
+    "elysia": "latest",
+    "pg-promise": "^11.5.4",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "@kitajs/html": "^2.1.2",
+    "bun-types": "^1.0.1",
+    "daisyui": "latest",
+    "typescript": "^5.2.2"
   },
   "module": "src/index.js"
 }
