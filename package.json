@@ -11,6 +11,7 @@
     "@elysiajs/static": "^0.6.0",
     "elysia": "latest",
     "pg-promise": "^11.5.4",
+    "postgres": "^3.3.5",
     "zod": "^3.22.2"
   },
   "devDependencies": {

@@ -31,7 +31,7 @@ export default () => {
           <div class="hero-content text-center text-neutral-content">
             <div>
               <h1 class="mb-5 text-6xl font-bold">
-                🔭 <span class="shift-color drop-shadow-md">Moon Reporter</span>
+                🔭 <span class="shift-color drop-shadow-md">MoonScope</span>
               </h1>
               <p class="mb-5 glass rounded drop-shadow-md inline-block p-2">Access all your Moonwall test reports in one place.</p>
   
