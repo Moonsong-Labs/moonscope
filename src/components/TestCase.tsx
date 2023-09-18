@@ -1,27 +1,30 @@
 import path from "path";
 import { TestDataModel } from "../model";
 import { currentTz } from "../common/utils";
-import { LinkedTableCell } from "./table";
 import { CrumbBuilder } from "./BreadCrumbs";
+import { LinkedTableCell } from "./table";
 
 export default ({
   reportType,
   id,
-  collapse,
+  testCase,
 }: {
   reportType: string;
   id: string;
-  collapse?: boolean;
+  testCase: string;
 }) => {
   const tableModel = TestDataModel.getInstance(`${reportType}_reports`);
   const data = tableModel.fetchEntry(parseInt(id));
+  const testCaseId = parseInt(testCase);
 
   if (data === undefined) {
     return <div>404</div>;
   }
 
   const [_, [env_name, testData]] = data;
-  const href = `/${reportType}`;
+  const testCaseResult = testData.testResults[testCaseId];
+  const href = `/${reportType}/${id}`;
+
   return (
     <div
       class="flex flex-col w-full h-[calc(100vh-64px)] justify-center items-center base-200 p-8"
@@ -29,11 +32,15 @@ export default ({
       un-cloak
       hx-ext="preload"
     >
-      <div class="w-full min-w-lg max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 max-h-[85vh] overflow-y-auto">
-        <CrumbBuilder reportType={reportType} runId={id} />
+      <div class="w-full min-w-lg max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 max-h-[85vh] overflow-y-auto ">
+        <CrumbBuilder
+          reportType={reportType}
+          runId={id}
+          expandTest={testCase}
+        />
 
         <div class="overflow-x-auto">
-          <table class="table table-xs">
+          <table name="testFile" class="table table-xs">
             <thead>
               <tr>
                 <th>StartTime</th>
@@ -75,8 +82,7 @@ export default ({
               )}
             </tbody>
           </table>
-
-          <table class="table table-xs mt-5">
+          <table name="details" class="table table-xs mt-5">
             <thead>
               <tr>
                 <th>Test FileName</th>
@@ -89,16 +95,17 @@ export default ({
             <tbody>
               {testData.testResults.map((testResult, index) => {
                 const href = `/${reportType}/${id}/${index}`;
+
                 return (
                   <>
                     <tr
                       key={`${id}-${index}`}
                       class="hover:bg-gray-200 transition-colors duration-150"
                     >
-                      <LinkedTableCell
-                        href={href}
-                        children={path.basename(testResult.name)}
-                      />
+                      <LinkedTableCell href={href}>
+                        
+                        {path.basename(testResult.name)}
+                      </LinkedTableCell>
                       <LinkedTableCell href={href}>{`${new Date(
                         testResult.startTime,
                       ).toLocaleString()} (${currentTz()})`}</LinkedTableCell>
@@ -107,7 +114,7 @@ export default ({
                       ).toLocaleString()} (${currentTz()})`}</LinkedTableCell>
                       <LinkedTableCell href={href}>
                         {testResult.status == "failed" ? (
-                          <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">
+                          <p class="badge badge-error text-bold drop-shadow-md font-semibold ">
                             FAILED
                           </p>
                         ) : (
@@ -120,16 +127,57 @@ export default ({
                         {testResult.message ? (
                           testResult.message
                         ) : (
-                          <div class="badge badge-ghost">no messages</div>
+                          <div class="badge badge-outline text-xs">
+                            no messages
+                          </div>
                         )}
                       </LinkedTableCell>
                     </tr>
-
-                    <tr
-                      key={`details-${id}`}
-                      id={`details-${id}`}
-                      class="hidden"
-                    ></tr>
+                    {index === testCaseId ? (
+                      <tr
+                        key={`details-${testResult.name}`}
+                        id={`details-${testResult.name}`}
+                      >
+                        <td colspan="5">
+                          <table class="table table-xs w-full base-200 bg-gray-100 my-2">
+                            <thead>
+                              <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Duration</th>
+                                <th>Failure Messages</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {testCaseResult.assertionResults.map(
+                                (assertion, index) => (
+                                  <tr key={index} name="extraDetails">
+                                    <td>{assertion.title}</td>
+                                    <td>
+                                      {assertion.status == "failed" ? (
+                                        <p class="badge badge-error text-bold drop-shadow-md font-semibold ">
+                                          FAILED
+                                        </p>
+                                      ) : (
+                                        <p class="badge badge-success drop-shadow-md font-semibold ">
+                                          PASS
+                                        </p>
+                                      )}
+                                    </td>
+                                    <td>{assertion.duration}ms</td>
+                                    <td>
+                                      {assertion.failureMessages.join(", ")}
+                                    </td>
+                                  </tr>
+                                ),
+                              )}
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr class="hidden"></tr>
+                    )}
                   </>
                 );
               })}
