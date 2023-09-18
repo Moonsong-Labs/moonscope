@@ -1,15 +1,31 @@
-import pgPromise, { IDatabase } from "pg-promise";
+import postgres, { Sql } from "postgres";
 
 class PostgreSQL {
   private static instance: PostgreSQL;
-  private database: IDatabase<any>;
+  private database: Sql;
 
   private constructor() {
-    const pgp = pgPromise({});
-    if (Bun.env.DB_CONNECTION_STRING === undefined) {
-      throw new Error("DB_CONNECTION_STRING is not defined");
+    const check = checkEnvVars();
+    if (check !== true) {
+      throw new Error(`${check.join(",")} environment variables are not defined, cannot connect.`);
     }
-    this.database = pgp(Bun.env.DB_CONNECTION_STRING);
+
+    const connectionString = `postgres://${Bun.env.PGUSER}:${encodeURIComponent(Bun.env.PGPASSWORD!)}@${
+      Bun.env.PGHOST
+    }:${Bun.env.PGPORT}/${Bun.env.PGDATABASE}`;
+
+    const sql = postgres(
+      connectionString,
+      Bun.env.LOCAL_DB === "true"
+        ? {}
+        : {
+            ssl: {
+              rejectUnauthorized: false,
+            },
+          }
+    );
+
+    this.database = sql;
   }
 
   public static getInstance(): PostgreSQL {
@@ -19,9 +35,18 @@ class PostgreSQL {
     return PostgreSQL.instance;
   }
 
-  public db(): IDatabase<any> {
+  public db(): Sql {
     return this.database;
   }
 }
 
 export default PostgreSQL;
+
+function checkEnvVars(): true | ConnectionEnvVars[] {
+  const missingEnvVars = requiredEnvVars.filter((envVar) => Bun.env[envVar] === undefined);
+  return missingEnvVars.length > 0 ? missingEnvVars : true;
+}
+
+type ConnectionEnvVars = (typeof requiredEnvVars)[keyof typeof requiredEnvVars];
+
+const requiredEnvVars = ["PGHOST", "PGPORT", "PGDATABASE", "PGUSER", "PGPASSWORD"] as const;

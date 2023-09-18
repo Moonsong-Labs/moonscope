@@ -1,3 +1,4 @@
+import { table } from "console";
 import { DBConnector } from "../database";
 import { TableData, TestData } from "../types/data";
 
@@ -15,9 +16,10 @@ class TestRunModel {
   }
 
   async ingest(): Promise<void> {
-    const results = await this.db.any<TableData>(`SELECT * FROM ${this.tableName} ;`);
+    const table = this.tableName;
+    const results: TableData[] = await this.db`select * from ${this.db(table)}`;
     results.forEach((result) => {
-      console.log(`Ingesting run #${result.id} : ${result.moonwall_env} for ${this.tableName}`)
+      console.log(`Ingesting run #${result.id} : ${result.moonwall_env} for ${this.tableName}`);
       this.state.set(result.id, [result.moonwall_env, result.data]);
     });
   }
@@ -46,14 +48,15 @@ class TestRunModel {
   }
 
   async insert(moonwall_env: string, data: TestData): Promise<number> {
-    const insertResult = await this.db.one<{ id: number }>(
-      `INSERT INTO ${this.tableName} (moonwall_env, data) VALUES ( $1, $2::jsonb) RETURNING id;`,
-      [moonwall_env, data]
-    );
+    const requestData = { moonwall_env, data: data as any };
+    const insertResult = await this.db`INSERT INTO ${this.db(this.tableName)} ${this.db(
+      requestData,
+      "moonwall_env",
+      "data"
+    )} RETURNING id;`;
 
-    this.state.set(insertResult.id, [moonwall_env, data]);
-
-    return insertResult.id
+    this.state.set(insertResult[0].id, [moonwall_env, data]);
+    return insertResult[0].id;
   }
 }
 
