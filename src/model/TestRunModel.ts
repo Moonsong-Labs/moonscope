@@ -1,4 +1,3 @@
-import { table } from "console";
 import { DBConnector } from "../database";
 import { TableData, TestData } from "../types/data";
 
