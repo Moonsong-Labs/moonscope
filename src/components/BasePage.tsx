@@ -1,19 +1,8 @@
 import { TestDataModel } from "../model";
+import { type Children } from "@kitajs/html";
 
-const currentTz = () => {
-  const timezoneOffsetMinutes = new Date().getTimezoneOffset();
-  const hours = Math.floor(Math.abs(timezoneOffsetMinutes) / 60);
-  const minutes = Math.abs(timezoneOffsetMinutes) % 60;
-  const hoursString = (hours < 10 ? "0" : "") + hours;
-  const minutesString = (minutes < 10 ? "0" : "") + minutes;
-
-  // Construct the timezone offset string
-  const timezoneOffsetString = (timezoneOffsetMinutes > 0 ? "-" : "+") + hoursString + minutesString;
-  return `GMT${timezoneOffsetString}`;
-};
-
-export default ({ pageTitle, tableName, path }: { pageTitle: string; tableName: string; path: string }) => {
-  const tableModel = TestDataModel.getInstance(tableName);
+export default ({ pageTitle, reportType }: { pageTitle: string; reportType: string }) => {
+  const tableModel = TestDataModel.getInstance(`${reportType}_reports`);
   const data = tableModel.fetchAllEntries();
 
   return (
@@ -41,28 +30,34 @@ export default ({ pageTitle, tableName, path }: { pageTitle: string; tableName: 
               </tr>
             </thead>
             <tbody>
-              {data.map(([id, [env, testData]]) => (
-                <a href={`${path}/${id}`}>
+              {data.map(([id, [env, testData]]) => {
+                const href = `/${reportType}/${id}`;
 
-                  {/** TODO: CHANGE THIS SO HX-GET ONLY REPLACES THE BODY SECTION WITH NEW WINDOW AND GIVES BACK BUTTON */}
-                  <tr key={id} onClick={() => (window.location.href = `${path}/${id}`)} style={{ cursor: "pointer" }}>
-                    <td>{id}</td>
-                    <td>{`${new Date(testData.startTime).toLocaleString()} (${currentTz()})`}</td>
-                    <td>{env}</td>
-                    <td>{JSON.stringify(testData.numTotalTestSuites)}</td>
-                    <td>{JSON.stringify(testData.numTotalTests)}</td>
-                    <td>{JSON.stringify(testData.numFailedTests)}</td>
-                    <td>{JSON.stringify(testData.numPendingTests)}</td>
+                return (
+                  <tr key={id}>
+                    <LinkedTableCell href={href}>{id}</LinkedTableCell>
+                    <LinkedTableCell href={href}>{`${new Date(
+                      testData.startTime
+                    ).toLocaleString()} (${currentTz()})`}</LinkedTableCell>
+                    <LinkedTableCell href={href}>{env}</LinkedTableCell>
+                    <LinkedTableCell href={href}>{JSON.stringify(testData.numTotalTestSuites)}</LinkedTableCell>
+                    <LinkedTableCell href={href}>{JSON.stringify(testData.numTotalTests)}</LinkedTableCell>
+                    <LinkedTableCell href={href}>{JSON.stringify(testData.numFailedTests)}</LinkedTableCell>
+                    <LinkedTableCell href={href}>{JSON.stringify(testData.numPendingTests)}</LinkedTableCell>
                     <td>
                       {testData.success ? (
-                        <p class="badge badge-success drop-shadow-md font-semibold ">PASS</p>
+                        <a href={href}>
+                          <p class="badge badge-success drop-shadow-md font-semibold ">PASS</p>
+                        </a>
                       ) : (
-                        <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">FAILED</p>
+                        <a href={href}>
+                          <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">FAILED</p>
+                        </a>
                       )}
                     </td>
                   </tr>
-                </a>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -70,3 +65,26 @@ export default ({ pageTitle, tableName, path }: { pageTitle: string; tableName: 
     </div>
   );
 };
+
+const currentTz = () => {
+  const timezoneOffsetMinutes = new Date().getTimezoneOffset();
+  const hours = Math.floor(Math.abs(timezoneOffsetMinutes) / 60);
+  const minutes = Math.abs(timezoneOffsetMinutes) % 60;
+  const hoursString = (hours < 10 ? "0" : "") + hours;
+  const minutesString = (minutes < 10 ? "0" : "") + minutes;
+
+  // Construct the timezone offset string
+  const timezoneOffsetString = (timezoneOffsetMinutes > 0 ? "-" : "+") + hoursString + minutesString;
+  return `GMT${timezoneOffsetString}`;
+};
+
+type LinkedTableCellProps = {
+  href: string;
+  children: Children;
+};
+
+const LinkedTableCell = ({ href, children }: LinkedTableCellProps) => (
+  <td>
+    <a href={href}>{children}</a>
+  </td>
+);

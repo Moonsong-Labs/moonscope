@@ -21,20 +21,28 @@ const app = new Elysia()
     );
   })
   .get("/:type", ({ params: { type } }) => (
-    <BaseHtml>
-      <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
-        <NavBar />
-        <BasePage pageTitle={`${type.toLocaleUpperCase()} TESTS`} path="/smoke" tableName={`${type}_reports`} />
-      </div>
-    </BaseHtml>
+    <div id="app-container">
+      <BaseHtml>
+        <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
+          <NavBar />
+          <BasePage pageTitle={`${type.toLocaleUpperCase()} TESTS`} reportType={type} />
+        </div>
+      </BaseHtml>
+    </div>
   ))
   .get("/:type/:id", ({ params: { type, id } }) => (
-    <BaseHtml>
-      <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
-        <NavBar />
-        <DetailPage pageTitle="Coverage" path={`/${type}/${id}`} tableName={`${type}_reports`} />
-      </div>
-    </BaseHtml>
+    <div id="app-container">
+      <BaseHtml>
+        <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
+          <NavBar />
+          <DetailPage
+            pageTitle={`${type.toLocaleUpperCase()} TESTS > ${id}`}
+            path={`/${type}/${id}`}
+            tableName={`${type}_reports`}
+          />
+        </div>
+      </BaseHtml>
+    </div>
   ))
   .listen(3000);
 
