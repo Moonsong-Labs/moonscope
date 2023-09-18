@@ -4,19 +4,22 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.tsx"
+    "dev": "bun run --watch src/index.tsx",
+    "tailwind": "bunx tailwindcss -i ./src/page/input.css -o ./public/output.css --watch"
   },
   "dependencies": {
     "@elysiajs/html": "^0.6.5",
     "@elysiajs/static": "^0.6.0",
+    "@kitajs/ts-html-plugin": "^1.0.1",
     "elysia": "latest",
     "postgres": "^3.3.5",
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@kitajs/html": "^2.1.2",
+    "@kitajs/html": "^2.2.2",
     "bun-types": "^1.0.1",
     "daisyui": "latest",
+    "tailwindcss": "^3.3.3",
     "typescript": "^5.2.2"
   },
   "module": "src/index.js"

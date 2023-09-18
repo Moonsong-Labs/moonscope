@@ -7,6 +7,7 @@ import BasePage from "./components/BasePage";
 import NavBar from "./components/Nav";
 import Splash from "./components/Splash";
 import DetailPage from "./components/DetailPage";
+import TestAssert from "./components/Assert";
 
 const svr = await backEnd();
 
@@ -21,29 +22,28 @@ const app = new Elysia()
     );
   })
   .get("/:type", ({ params: { type } }) => (
-    <div id="app-container">
-      <BaseHtml>
-        <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
-          <NavBar />
-          <BasePage pageTitle={`${type.toLocaleUpperCase()} TESTS`} reportType={type} />
-        </div>
-      </BaseHtml>
-    </div>
+    <BaseHtml>
+      <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
+        <NavBar />
+        <BasePage reportType={type} />
+      </div>
+    </BaseHtml>
   ))
-  .get("/:type/:id", ({ params: { type, id } }) => (
-    <div id="app-container">
-      <BaseHtml>
-        <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
-          <NavBar />
-          <DetailPage
-            pageTitle={`${type.toLocaleUpperCase()} TESTS > ${id}`}
-            path={`/${type}/${id}`}
-            tableName={`${type}_reports`}
-          />
-        </div>
-      </BaseHtml>
-    </div>
-  ))
+  .get("/:type/:id", ({ params: { type, id }, query }) => {
+    console.log(`query: ${JSON.stringify(query)}`)
+    return (
+    <BaseHtml>
+      <div class="App flex flex-col min-h-screen justify-between bg-base-300 w-full">
+        <NavBar />
+        <DetailPage reportType={type} id={id} />
+      </div>
+    </BaseHtml>
+  )})
+  .get("/:type/:id/:test", ({ params: { type, id, test }, query }) => {
+    console.log(`query: ${JSON.stringify(query)}`)
+    const isExpanded = query.expanded === "true";
+    return !isExpanded ? <TestAssert reportType={type} id={id} testId={test} /> : <></>;
+  })
   .listen(3000);
 
 console.log(`🦊 Elysia WebApp is running at ${app.server?.hostname}:${app.server?.port}`);

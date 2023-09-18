@@ -38,6 +38,15 @@ class TestRunModel {
     return this.state;
   }
 
+  fetchEntry(id: number): [number, [string, TestData]] | undefined {
+    const values =this.state.get(id);
+    return (values ? [id, values] : undefined)
+  }
+
+  fetchTestResults(runId:number, testId:number){
+    return this.state.get(runId)?.[1].testResults
+  }
+
   fetchAllEntries(): [number, [string, TestData]][] {
     return Array.from(this.state.entries());
   }
