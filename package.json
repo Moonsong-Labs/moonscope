@@ -3,11 +3,12 @@
   "version": "1.0.50",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.tsx",
+    "start": "bun run src/index.tsx",
     "tailwind": "bunx tailwindcss -i ./src/page/styles/input.css -o ./public/output.css --watch"
   },
   "dependencies": {
+    "@elysiajs/bearer": "^0.6.0",
     "@elysiajs/html": "^0.6.5",
     "@elysiajs/static": "^0.6.0",
     "@kitajs/ts-html-plugin": "^1.0.1",
