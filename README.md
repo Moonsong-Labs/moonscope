@@ -4,7 +4,7 @@
 
 ## 📖 Introduction
 
-MoonScope is a test report aggregator, which combines Moonwall, to provide an entirely server side rendered application for viewing and exploring test reports. With a focus on speed and scalability, it is designed to be able to handle thousands of test reports, and provide a simple interface to explore them. There is no client side state or rendering, and plain HTML only is served to the client via AJAX calls.
+MoonScope is a test report aggregator, which integrates with [Moonwall](https://moonsong-labs.github.io/moonwall/), to provide an entirely server side rendered application for viewing and exploring test reports. With a focus on speed and scalability, it is designed to be able to handle many thousands of test reports, and provide a simple interface to explore them. There is no client side state or rendering, and plain HTML only is served to the client via AJAX calls.
 
 ## Preqrequisites
 
@@ -27,6 +27,7 @@ LOCAL_DB=true
 
 > [!NOTE]  
 > `MOONSCOPE_TOKEN` is the primitive precursor to access control, which is a simple token to determine if you can insert into the DB or not. This is a temporary solution, and will be replaced with a proper authentication system in the future.
+
 > [!NOTE]  
 > `LOCAL_DB` controls whether the connection should be using SSL or not. If you're using a local DB, you can set this to `true` to disable SSL exception.
 
