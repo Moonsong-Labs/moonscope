@@ -1,12 +1,12 @@
-import { TestDataModel } from "../../model";
 import { CrumbBuilder } from "../ui/BreadCrumbs";
 import { currentTz } from "../../common/utils";
 import { LinkedTableCell } from "../ui/Table";
 import { TableData } from "../../types";
 
-export default ({ reportType }: { reportType: string }) => {
-  const tableModel = TestDataModel.getInstance(`${reportType}_reports`);
-  const data = tableModel.fetchAllEntries();
+export default ({ reportType, data, sort, direction }: { reportType: string , data: any[], sort: string, direction: "asc" | "desc"  }) => {
+
+  const toggleDirection = (current: "asc" | "desc") => current === "asc" ? "desc" : "asc";
+
 
   return (
     <div class="w-full min-w-lg max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg max-h-[85vh] overflow-y-auto">
@@ -16,13 +16,27 @@ export default ({ reportType }: { reportType: string }) => {
         <table class="table table-xs">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>StartTime</th>
-              <th>Moonwall Environment</th>
-              <th>Test Suites</th>
-              <th>Total Tests</th>
-              <th>Failed Tests</th>
-              <th>Skipped Tests</th>
+            <th>
+                <a href={`/${reportType}?sort=id&direction=${sort === "id" ? toggleDirection(direction) : "asc"}`}>ID</a>
+              </th>
+              <th>
+                <a href={`/${reportType}?sort=startTime`}>StartTime</a>
+              </th>
+              <th>
+                <a href={`/${reportType}?sort=moonwall_env`}>Moonwall Environment</a>
+              </th>
+              <th>
+                <a href={`/${reportType}?sort=testSuites`}>Test Suites</a>
+              </th>
+              <th>
+                <a href={`/${reportType}?sort=totalTests`}>Total Tests</a>
+              </th>
+              <th>
+                <a href={`/${reportType}?sort=failedTests`}>Failed Tests</a>
+              </th>
+              <th>
+                <a href={`/${reportType}?sort=skippedTests`}>Skipped Tests</a>
+              </th>
               <th>Result</th>
             </tr>
           </thead>
@@ -76,7 +90,7 @@ const TableRow = ({ id, reportType, env, testData }: TableRowProps) => {
           </a>
         ) : (
           <a href={href}>
-            <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">
+            <p class="badge badge-error text-bold drop-shadow-md font-semibold ">
               FAILED
             </p>
           </a>

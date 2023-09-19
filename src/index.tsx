@@ -11,6 +11,7 @@ import {
   Landing,
   NavBar,
 } from "./components";
+import { TestDataModel } from "./model";
 
 const svr = await backEndApi();
 
@@ -22,11 +23,19 @@ const app = new Elysia()
       <Landing />
     </BaseHtml>
   ))
-  .get("/:type", ({ params: { type } }) => (
-    <Layout>
-      <BasePage reportType={type} />
-    </Layout>
-  ))
+  .get("/:type", ({ params: { type }, query: { sort, direction = "asc" } }) => {
+    const tableModel = TestDataModel.getInstance(`${type}_reports`);
+  
+    const sortedData = typeof sort === "string"
+      ? tableModel.fetchAllEntriesSorted(sort, direction as "asc" | "desc")
+      : tableModel.fetchAllEntries();
+
+    return (
+      <Layout>
+        <BasePage reportType={type} data={sortedData} direction={direction as any} sort={sort as any}  />
+      </Layout>
+    );
+  })
   .get("/:type/:id", ({ params: { type, id } }) => (
     <Layout>
       <DetailPage reportType={type} id={id} />

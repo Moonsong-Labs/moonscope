@@ -34,6 +34,7 @@ export async function backEndApi() {
       set.status = result ? 202 : 404;
       return { result: result ? result : "NOT FOUND" };
     })
+    //@ts-expect-error - Elysia plugin types are not up to date
     .post("/insert", async ({ bearer, body, request, headers, set }) => {
       if (!bearer) {
         set.status = 400;

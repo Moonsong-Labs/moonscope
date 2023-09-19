@@ -68,7 +68,7 @@ export default ({
                       PASS
                     </p>
                   ) : (
-                    <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">
+                    <p class="badge badge-error text-bold drop-shadow-md font-semibold ">
                       FAILED
                     </p>
                   )}
@@ -129,7 +129,7 @@ const DetailTableRow = ({
         ).toLocaleString()} (${currentTz()})`}</LinkedTableCell>
         <LinkedTableCell href={href}>
           {testResult.status == "failed" ? (
-            <p class="badge badge-fail text-bold drop-shadow-md font-semibold ">
+            <p class="badge badge-error text-bold drop-shadow-md font-semibold ">
               FAILED
             </p>
           ) : (

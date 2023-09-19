@@ -1,7 +1,7 @@
 export interface AssertionResult {
   ancestorTitles: string[];
   fullName: string;
-  status: "passed" | "failed" | "pending" | "todo";
+  status: "passed" | "failed" | "pending" | "todo"| "skipped";
   title: string;
   duration: number;
   failureMessages: string[];
@@ -11,7 +11,7 @@ export interface TestResult {
   assertionResults: AssertionResult[];
   startTime: number;
   endTime: number;
-  status: "passed" | "failed" | "pending" | "todo";
+  status: "passed" | "failed" | "pending" | "todo" | "skipped";
   message: string;
   name: string;
 }
