@@ -4,7 +4,7 @@ import { z } from "zod";
 import { TestDataSchema } from "./types";
 import { Tables } from "./database";
 
-export async function backEnd() {
+export async function backEndApi() {
   for (const table of Tables) {
     const dbTable = TestDataModel.getInstance(table);
     await dbTable.ingest();

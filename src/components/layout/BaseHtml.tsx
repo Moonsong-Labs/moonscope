@@ -11,9 +11,9 @@ export default ({ children }: PropsWithChildren) =>
   <script src="https://unpkg.com/htmx.org@1.9.5" integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
   <script src="https://unpkg.com/htmx.org/dist/ext/preload.js"></script>
-  <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/icons/favicon-16x16.png">
   <link href="/public/output.css" rel="stylesheet">
   <link rel="manifest" href="/site.webmanifest">
   <script>

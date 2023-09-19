@@ -1,4 +1,4 @@
-import { LinkedTableCellProps } from "../types/table";
+import { LinkedTableCellProps } from "../../types/table";
 
 export const LinkedTableCell = ({ href, children }: LinkedTableCellProps) => (
   <td>
