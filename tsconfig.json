@@ -5,6 +5,7 @@
     "target": "esnext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
+    "incremental": true,
     "allowImportingTsExtensions": true,
     "strict": true,
     "downlevelIteration": true,
@@ -12,12 +13,14 @@
     "jsx": "react",
     "jsxFactory": "ElysiaJSX",
     "jsxFragmentFactory": "ElysiaJSX.Fragment",
+    "plugins": [{ "name": "@kitajs/ts-html-plugin" }],
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "noEmit": true,
     "types": [
-      "bun-types" // add Bun global
+      "bun-types"
     ]
-  }
+  },
+  "exclude": ["node_modules"]
 }

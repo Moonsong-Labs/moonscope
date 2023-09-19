@@ -13,7 +13,6 @@
 /out/
 
 
-
 # production
 /build
 
@@ -27,7 +26,12 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env.backup
+.env
 .env.production.local
+.env.production
+.env.development
+
 
 # vercel
 .vercel
