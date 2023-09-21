@@ -20,7 +20,7 @@ export default ({
     return <NotFound />;
   }
 
-  const [_, [env_name, testData]] = data;
+  const [_, [env_name, branch, testData]] = data;
   const href = `/${reportType}`;
   return (
     <div class="w-full min-w-lg max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 max-h-[85vh] overflow-y-auto">
@@ -32,6 +32,7 @@ export default ({
             <tr>
               <th>StartTime</th>
               <th>Moonwall Environment</th>
+              <th>Branch</th>
               <th>Test Suites</th>
               <th>Total Tests</th>
               <th>Failed Tests</th>
@@ -50,6 +51,7 @@ export default ({
                   testData.startTime,
                 ).toLocaleString()} (${currentTz()})`}</LinkedTableCell>
                 <LinkedTableCell href={href}>{env_name}</LinkedTableCell>
+                <LinkedTableCell href={href}>{branch}</LinkedTableCell>
                 <LinkedTableCell href={href}>
                   {JSON.stringify(testData.numTotalTestSuites)}
                 </LinkedTableCell>

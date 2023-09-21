@@ -26,6 +26,9 @@ export default ({ reportType, data, sort, direction }: { reportType: string , da
                 <a href={`/${reportType}?sort=moonwall_env`}>Moonwall Environment</a>
               </th>
               <th>
+                <a href={`/${reportType}?sort=branch`}>Branch</a>
+              </th>
+              <th>
                 <a href={`/${reportType}?sort=testSuites`}>Test Suites</a>
               </th>
               <th>
@@ -41,11 +44,12 @@ export default ({ reportType, data, sort, direction }: { reportType: string , da
             </tr>
           </thead>
           <tbody>
-            {data.map(([id, [env, testData]]) => (
+            {data.map(([id, [env, branch, testData]]) => (
               <TableRow
                 id={id}
                 reportType={reportType}
                 env={env}
+                branch={branch}
                 testData={testData}
               />
             ))}
@@ -56,7 +60,7 @@ export default ({ reportType, data, sort, direction }: { reportType: string , da
   );
 };
 
-const TableRow = ({ id, reportType, env, testData }: TableRowProps) => {
+const TableRow = ({ id, reportType, env, branch, testData }: TableRowProps) => {
   const href = `/${reportType}/${id}`;
 
   return (
@@ -69,6 +73,7 @@ const TableRow = ({ id, reportType, env, testData }: TableRowProps) => {
         ).toLocaleString()} (${currentTz()})`}
       />
       <LinkedTableCell href={href}>{env}</LinkedTableCell>
+      <LinkedTableCell href={href}>{branch}</LinkedTableCell>
       <LinkedTableCell href={href}>
         {JSON.stringify(testData.numTotalTestSuites)}
       </LinkedTableCell>
@@ -104,5 +109,6 @@ interface TableRowProps {
   id: TableData["id"];
   reportType: string;
   env: TableData["moonwall_env"];
+  branch: TableData["branch"];
   testData: TableData["data"];
 }

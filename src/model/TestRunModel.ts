@@ -2,7 +2,7 @@ import { DBConnector } from "../database";
 import { TableData, TestData } from "../types/data";
 
 // TODO: Turn these queries into DB queries which are cached
-type TestRunStore = Map<number, [string, TestData]>;
+type TestRunStore = Map<number, [string, string, TestData]>;
 
 class TestRunModel {
   private static instances: Map<string, TestRunModel> = new Map();
@@ -11,7 +11,7 @@ class TestRunModel {
   tableName: string;
 
   private constructor(table: string) {
-    this.state = new Map<number, [string, TestData]>();
+    this.state = new Map<number, [string, string, TestData]>();
     this.tableName = table;
   }
 
@@ -22,7 +22,7 @@ class TestRunModel {
       console.log(
         `Ingesting run #${result.id} : ${result.moonwall_env} for ${this.tableName}`,
       );
-      this.state.set(result.id, [result.moonwall_env, result.data]);
+      this.state.set(result.id, [result.moonwall_env, result.branch || "", result.data]);
     });
   }
 
@@ -33,7 +33,7 @@ class TestRunModel {
     return this.instances.get(table)!;
   }
 
-  get(id: number): [string, TestData] | undefined {
+  get(id: number): [string, string, TestData] | undefined {
     return this.state.get(id);
   }
 
@@ -41,24 +41,24 @@ class TestRunModel {
     return this.state;
   }
 
-  fetchEntry(id: number): [number, [string, TestData]] | undefined {
+  fetchEntry(id: number): [number, [string, string, TestData]] | undefined {
     const values = this.state.get(id);
     return values ? [id, values] : undefined;
   }
 
   fetchTestResults(runId: number, testId: number) {
-    return this.state.get(runId)?.[1].testResults;
+    return this.state.get(runId)?.[2].testResults;
   }
 
-  fetchAllEntries(): [number, [string, TestData]][] {
+  fetchAllEntries(): [number, [string, string, TestData]][] {
     return Array.from(this.state.entries());
   }
 
   fetchAllEntriesSorted(
     sortBy: string,
     direction: "asc" | "desc" = "asc",
-  ): [number, [string, TestData]][] {
-    const validColumns = ["id", "moonwall_env", "data"];
+  ): [number, [string, string, TestData]][] {
+    const validColumns = ["id", "moonwall_env", "branch", "data"];
 
     if (!validColumns.includes(sortBy)) {
       throw new Error("Invalid sort column");
@@ -78,10 +78,14 @@ class TestRunModel {
           comparisonValueA = a[1][0];
           comparisonValueB = b[1][0];
           break;
+        case "branch":
+          comparisonValueA = a[1][1];
+          comparisonValueB = b[1][1];
+          break;
         /// WIP
         case "data":
-          comparisonValueA = a[1][1].startTime;
-          comparisonValueB = b[1][1].startTime;
+          comparisonValueA = a[1][2].startTime;
+          comparisonValueB = b[1][2].startTime;
           break;
         default:
           return 0;
@@ -94,17 +98,17 @@ class TestRunModel {
       }
     });
   }
-  fetchAllValues(): [string, TestData][] {
+  fetchAllValues(): [string, string, TestData][] {
     return Array.from(this.state.values());
   }
 
-  async insert(moonwall_env: string, data: TestData): Promise<number> {
-    const requestData = { moonwall_env, data: data as any };
+  async insert(moonwall_env: string, branch: string, data: TestData): Promise<number> {
+    const requestData = { moonwall_env, branch, data: data as any };
     const insertResult = await this.db`INSERT INTO ${this.db(
       this.tableName,
-    )} ${this.db(requestData, "moonwall_env", "data")} RETURNING id;`;
+    )} ${this.db(requestData, "moonwall_env", "branch", "data")} RETURNING id;`;
 
-    this.state.set(insertResult[0].id, [moonwall_env, data]);
+    this.state.set(insertResult[0].id, [moonwall_env, branch, data]);
     return insertResult[0].id;
   }
 }

@@ -61,6 +61,7 @@ export async function backEndApi() {
         TestDataSchema.parse(body);
         const response = await TestDataModel.getInstance(headers.table).insert(
           headers.moonwallenv!,
+          headers.branch!,
           body as any,
         );
         return { status: "ok", id: response };

@@ -39,5 +39,10 @@ export interface TableData {
    */
   moonwall_env: string;
 
+  /**
+   * This is the optional branch used when running the test
+   */
+  branch?: string;
+
   data: TestData;
 }

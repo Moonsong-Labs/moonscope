@@ -21,7 +21,7 @@ const ExpandedPage = ({
     return <NotFound />;
   }
 
-  const [_, [__, testData]] = data;
+  const [_, [__, ___, testData]] = data;
 
   return (
     <div class="w-full min-w-lg max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6 max-h-[85vh] overflow-y-auto ">
@@ -44,11 +44,11 @@ const TestFileTable = ({
   id,
   href,
 }: {
-  data: [number, [string, TestData]];
+  data: [number, [string, string, TestData]];
   id: string;
   href: string;
 }) => {
-  const [_, [env_name, testData]] = data;
+  const [_, [env_name, branch, testData]] = data;
 
   return (
     <table name="testFile" class="table table-xs">
@@ -56,6 +56,7 @@ const TestFileTable = ({
         <tr>
           <th>StartTime</th>
           <th>Moonwall Environment</th>
+          <th>Branch</th>
           <th>Test Suites</th>
           <th>Total Tests</th>
           <th>Failed Tests</th>
@@ -76,6 +77,7 @@ const TestFileTable = ({
               testData.startTime,
             ).toLocaleString()} (${currentTz()})`}</LinkedTableCell>
             <LinkedTableCell href={href}>{env_name}</LinkedTableCell>
+            <LinkedTableCell href={href}>{branch}</LinkedTableCell>
             <LinkedTableCell href={href}>
               {JSON.stringify(testData.numTotalTestSuites)}
             </LinkedTableCell>
