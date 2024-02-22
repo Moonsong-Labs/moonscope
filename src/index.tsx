@@ -32,7 +32,7 @@ const app = new Elysia()
 
     return (
       <Layout>
-        <BasePage reportType={type} data={sortedData} direction={direction as any} sort={sort as any}  />
+        <BasePage reportType={type} data={sortedData} direction={direction as "asc" | "desc"} sort={sort as string}  />
       </Layout>
     );
   })

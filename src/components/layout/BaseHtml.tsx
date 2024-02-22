@@ -15,7 +15,7 @@ export default ({ children }: PropsWithChildren) =>
   <link rel="icon" type="image/png" sizes="32x32" href="/public/icons/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/public/icons/favicon-16x16.png">
   <link href="/public/output.css" rel="stylesheet">
-  <link rel="manifest" href="/site.webmanifest">
+  <link rel="manifest" href="/public/site.webmanifest">
   <script>
     htmx.config.globalViewTransitions = true;
   </script>
@@ -52,6 +52,11 @@ export default ({ children }: PropsWithChildren) =>
   </style>
 </head>
 
- ${children && (children! as any[]).join("")}
+ ${
+  children 
+  // && children children.length >0
+  // children && (children).join("")
+}
 
+ </html>
 `;
