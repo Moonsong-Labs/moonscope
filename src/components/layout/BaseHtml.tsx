@@ -1,7 +1,7 @@
 import { type PropsWithChildren } from "@kitajs/html";
 
 export default ({ children }: PropsWithChildren) =>
-  `<!DOCTYPE html>
+	`<!DOCTYPE html>
 <html lang="en" data-theme="autumn">
 
 <head>
@@ -53,10 +53,10 @@ export default ({ children }: PropsWithChildren) =>
 </head>
 
  ${
-  children 
-  // && children children.length >0
-  // children && (children).join("")
-}
+		children
+		// && children children.length >0
+		// children && (children).join("")
+ }
 
  </html>
 `;

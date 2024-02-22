@@ -5,108 +5,121 @@ import { TableData, TestData } from "../types/data";
 type TestRunStore = Map<number, [string, TestData]>;
 
 class TestRunModel {
-  private static instances: Map<string, TestRunModel> = new Map();
-  private state: TestRunStore;
-  private db = DBConnector.getInstance().db();
-  tableName: string;
+	private static instances: Map<string, TestRunModel> = new Map();
+	private state: TestRunStore;
+	private db = DBConnector.getInstance().db();
+	tableName: string;
 
-  private constructor(table: string) {
-    this.state = new Map<number, [string, TestData]>();
-    this.tableName = table;
-  }
+	private constructor(table: string) {
+		this.state = new Map<number, [string, TestData]>();
+		this.tableName = table;
+	}
 
-  async ingest(): Promise<void> {
-    const table = this.tableName;
-    const results: TableData[] = await this.db`select * from ${this.db(table)}`;
-    results.forEach((result) => {
-      console.log(
-        `Ingesting run #${result.id} : ${result.moonwall_env} for ${this.tableName}`,
-      );
-      this.state.set(result.id, [result.moonwall_env, result.data]);
-    });
-  }
+	async ingest(): Promise<void> {
+		const table = this.tableName;
+		const results: TableData[] = await this.db`select * from ${this.db(table)}`;
 
-  static getInstance(table: string): TestRunModel {
-    if (!this.instances.has(table)) {
-      this.instances.set(table, new TestRunModel(table));
-    }
-    return this.instances.get(table)!;
-  }
+		for (const result of results) {
+			console.log(
+				`Ingesting run #${result.id} : ${result.moonwall_env} for ${this.tableName}`,
+			);
+			this.state.set(result.id, [result.moonwall_env, result.data]);
+		}
+		// results.forEach((result) => {
+		// 	console.log(
+		// 		`Ingesting run #${result.id} : ${result.moonwall_env} for ${this.tableName}`,
+		// 	);
+		// 	this.state.set(result.id, [result.moonwall_env, result.data]);
+		// });
+	}
 
-  get(id: number): [string, TestData] | undefined {
-    return this.state.get(id);
-  }
+	static getInstance(table: string): TestRunModel {
+		if (!TestRunModel.instances.has(table)) {
+			TestRunModel.instances.set(table, new TestRunModel(table));
+		}
 
-  get currentState(): TestRunStore {
-    return this.state;
-  }
+		const res = TestRunModel.instances.get(table);
+		if (!res) {
+			throw new Error("Instance not found");
+		}
+		return res;
+	}
 
-  fetchEntry(id: number): [number, [string, TestData]] | undefined {
-    const values = this.state.get(id);
-    return values ? [id, values] : undefined;
-  }
+	get(id: number): [string, TestData] | undefined {
+		return this.state.get(id);
+	}
 
-  fetchTestResults(runId: number, testId: number) {
-    return this.state.get(runId)?.[1].testResults;
-  }
+	get currentState(): TestRunStore {
+		return this.state;
+	}
 
-  fetchAllEntries(): [number, [string, TestData]][] {
-    return Array.from(this.state.entries());
-  }
+	fetchEntry(id: number): [number, [string, TestData]] | undefined {
+		const values = this.state.get(id);
+		return values ? [id, values] : undefined;
+	}
 
-  fetchAllEntriesSorted(
-    sortBy: string,
-    direction: "asc" | "desc" = "asc",
-  ): [number, [string, TestData]][] {
-    const validColumns = ["id", "moonwall_env", "data"];
+	fetchTestResults(runId: number, testId: number) {
+		return this.state.get(runId)?.[1].testResults;
+	}
 
-    if (!validColumns.includes(sortBy)) {
-      throw new Error("Invalid sort column");
-    }
+	fetchAllEntries(): [number, [string, TestData]][] {
+		return Array.from(this.state.entries());
+	}
 
-    const entriesArray = Array.from(this.state.entries());
+	fetchAllEntriesSorted(
+		sortBy: string,
+		direction: "asc" | "desc" = "asc",
+	): [number, [string, TestData]][] {
+		const validColumns = ["id", "moonwall_env", "data"];
 
-    return entriesArray.sort((a, b) => {
-      let comparisonValueA, comparisonValueB;
+		if (!validColumns.includes(sortBy)) {
+			throw new Error("Invalid sort column");
+		}
 
-      switch (sortBy) {
-        case "id":
-          comparisonValueA = a[0];
-          comparisonValueB = b[0];
-          break;
-        case "moonwall_env":
-          comparisonValueA = a[1][0];
-          comparisonValueB = b[1][0];
-          break;
-        /// WIP
-        case "data":
-          comparisonValueA = a[1][1].startTime;
-          comparisonValueB = b[1][1].startTime;
-          break;
-        default:
-          return 0;
-      }
+		const entriesArray = Array.from(this.state.entries());
 
-      if (direction === "asc") {
-        return comparisonValueA > comparisonValueB ? 1 : -1;
-      } else {
-        return comparisonValueA < comparisonValueB ? 1 : -1;
-      }
-    });
-  }
-  fetchAllValues(): [string, TestData][] {
-    return Array.from(this.state.values());
-  }
+		return entriesArray.sort((a, b) => {
+			let comparisonValueA: string[] | number[] | string | number;
+			let comparisonValueB: string[] | number[] | string | number;
 
-  async insert(moonwall_env: string, data: TestData): Promise<number> {
-    const requestData = { moonwall_env, data: data as any };
-    const insertResult = await this.db`INSERT INTO ${this.db(
-      this.tableName,
-    )} ${this.db(requestData, "moonwall_env", "data")} RETURNING id;`;
+			switch (sortBy) {
+				case "id":
+					comparisonValueA = a[0];
+					comparisonValueB = b[0];
+					break;
+				case "moonwall_env":
+					comparisonValueA = a[1][0];
+					comparisonValueB = b[1][0];
+					break;
+				/// WIP
+				case "data":
+					comparisonValueA = a[1][1].startTime;
+					comparisonValueB = b[1][1].startTime;
+					break;
+				default:
+					return 0;
+			}
 
-    this.state.set(insertResult[0].id, [moonwall_env, data]);
-    return insertResult[0].id;
-  }
+			if (direction === "asc") {
+				return comparisonValueA > comparisonValueB ? 1 : -1;
+			}
+			return comparisonValueA < comparisonValueB ? 1 : -1;
+		});
+	}
+	fetchAllValues(): [string, TestData][] {
+		return Array.from(this.state.values());
+	}
+
+	async insert(moonwall_env: string, data: TestData): Promise<number> {
+		const requestData = { moonwall_env, data: data };
+		const insertResult = await this.db`INSERT INTO ${this.db(this.tableName)} ${
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			this.db(requestData as any, "moonwall_env", "data")
+		} RETURNING id;`;
+
+		this.state.set(insertResult[0].id, [moonwall_env, data]);
+		return insertResult[0].id;
+	}
 }
 
 export default TestRunModel;
