@@ -1,0 +1,34 @@
+name: Cron jobs
+
+on:
+#   schedule:
+#     - cron: "0 * * * *"
+  workflow_dispatch:
+    
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        network: ["stagenet"]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: "moonbeam-foundation/moonbeam"
+          path: mb
+      - uses: oven-sh/setup-bun@v1
+      - name: Run smoke test
+        # Set the ENV_WSS_NETWORK secret as an environment variable
+        # copy config from this repo
+        run: |
+          cd mb/test
+          bun install
+          bun moonwall test smoke_${{ matrix.network }}
+
+        # add upload to prod moonscope server
