@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Use a specific version of bun as the base image
-ARG BUN_VERSION=1.0.28
+ARG BUN_VERSION=1.0.29
 FROM oven/bun:${BUN_VERSION} as base
 
 # Set the working directory inside the container

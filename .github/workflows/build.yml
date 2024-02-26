@@ -1,0 +1,31 @@
+name: Build
+
+
+on:
+    pull_request:
+    push:
+      branches:
+        - master
+        - perm-*
+    workflow_dispatch:
+      inputs:
+        pull_request:
+          description: set to pull_request number to execute on external pr
+          required: false
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun fmt
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - uses: oven-sh/setup-bun@v1
+        - run: bun install
+        - run: bun lint
