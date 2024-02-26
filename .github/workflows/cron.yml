@@ -1,10 +1,9 @@
 name: Cron jobs
 
 on:
-#   schedule:
-#     - cron: "0 * * * *"
+  #   schedule:
+  #     - cron: "0 * * * *"
   workflow_dispatch:
-    
 
 jobs:
   smoke-test:
@@ -13,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         network: ["stagenet"]
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,6 +23,8 @@ jobs:
           path: mb
       - uses: oven-sh/setup-bun@v1
       - uses: pnpm/action-setup@v3
+        with:
+          version: 8
       - name: Run smoke test
         # Set the ENV_WSS_NETWORK secret as an environment variable
         # copy config from this repo
