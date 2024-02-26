@@ -23,6 +23,7 @@ jobs:
           repository: "moonbeam-foundation/moonbeam"
           path: mb
       - uses: oven-sh/setup-bun@v1
+      - uses: pnpm/action-setup@v3
       - name: Run smoke test
         # Set the ENV_WSS_NETWORK secret as an environment variable
         # copy config from this repo
