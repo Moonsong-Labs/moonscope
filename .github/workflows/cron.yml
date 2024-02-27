@@ -33,7 +33,7 @@ jobs:
         # copy config from this repo
         run: |
           cd mb/test
-          cp ../smoke/moonwall.config .
+          cp ../../smoke/moonwall.config .
           bun install
           bun moonwall test smoke_${{ matrix.network }}
 
